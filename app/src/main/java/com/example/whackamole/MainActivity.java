@@ -1,6 +1,7 @@
 package com.example.whackamole;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
@@ -17,8 +18,9 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
    ImageView img;
    Button butt;
-   TextView txt;
+   TextView txt,time;
    boolean isclicked = false;
+   CountDownTimer timer;
    int score =0;
    Handler handler;
     GridLayout Mygrid;
@@ -34,14 +36,38 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Initialize();
         createboard();
+        GameOver();
+        timer.start();
         handler.post(molesRunnable);
 
+    }
 
+    private void GameOver() {
+        timer.cancel();
+        handler.removeCallbacks(molesRunnable);
+        for (ImageView hole : holes){
+            hole.setImageResource(R.drawable.hole);
+
+        }
+        currentmoleindex = -1;
     }
 
     private void Initialize() {
         holes = new ArrayList<>();
         butt = findViewById(R.id.restbutton);
+        time = findViewById(R.id.textView2);
+        timer = new CountDownTimer(30000, 1000) {
+            @Override
+            public void onFinish() {
+                time.setText("gameover");
+            }
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                time.setText( millisUntilFinished / 1000 + "s");
+            }
+        };
         rnd = new Random();
         Mygrid = findViewById(R.id.gridLay);
         txt = findViewById(R.id.textView);
@@ -108,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     score = 0;
                     txt.setText("score is: " + score);
+                    timer.start();
                 }
             });
             holes.add(hole);
