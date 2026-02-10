@@ -3,21 +3,23 @@ package com.example.whackamole;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.gridlayout.widget.GridLayout;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
    ImageView img;
+   Button butt;
+   TextView txt;
+   boolean isclicked = false;
+   int score =0;
    Handler handler;
     GridLayout Mygrid;
     Random rnd;
@@ -34,12 +36,16 @@ public class MainActivity extends AppCompatActivity {
         createboard();
         handler.post(molesRunnable);
 
+
     }
 
     private void Initialize() {
         holes = new ArrayList<>();
+        butt = findViewById(R.id.restbutton);
         rnd = new Random();
         Mygrid = findViewById(R.id.gridLay);
+        txt = findViewById(R.id.textView);
+        txt.setText("score is: "+ score);
         handler = new Handler();
         molesRunnable = new Runnable() {
             @Override
@@ -56,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
+
 
     }
 
@@ -75,10 +82,32 @@ public class MainActivity extends AppCompatActivity {
             params.setMargins(10,10,10,10);
             hole.setLayoutParams(params);
             hole.setTag(i);
+            isclicked = false;
+
             hole.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    isclicked = true;
                     int clickhole = (int) v.getTag();
+
+
+                    if(clickhole == moleindex){
+                        score++;
+                        txt.setText("score is: " + score);
+                    }
+
+                    }
+
+
+
+            });
+
+
+            butt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    score = 0;
+                    txt.setText("score is: " + score);
                 }
             });
             holes.add(hole);
