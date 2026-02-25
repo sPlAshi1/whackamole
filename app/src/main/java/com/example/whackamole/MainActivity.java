@@ -1,5 +1,7 @@
 package com.example.whackamole;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -8,28 +10,36 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.gridlayout.widget.GridLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
    ImageView img;
+   Intent i;
    Button butt;
    TextView txt,time;
    boolean isclicked = false;
    CountDownTimer timer;
    int score =0;
+   int count = 0;
    Handler handler;
     GridLayout Mygrid;
     Random rnd;
+    SharedPreferences share;
     private ArrayList<ImageView> holes;
     private Runnable molesRunnable;
     final int holesnum = 9;
     int currentmoleindex = -1;
     int moleindex = 0;
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,11 +65,16 @@ public class MainActivity extends AppCompatActivity {
     private void Initialize() {
         holes = new ArrayList<>();
         butt = findViewById(R.id.restbutton);
+        share = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         time = findViewById(R.id.textView2);
+        editor =  share.edit();
+        i = new Intent(MainActivity.this, start_page.class);
         timer = new CountDownTimer(30000, 1000) {
             @Override
             public void onFinish() {
                 time.setText("gameover");
+                editor.apply();
+                startActivity(i);
             }
 
             @Override
@@ -120,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     if(clickhole == moleindex){
                         score++;
                         txt.setText("score is: " + score);
+                        editor.putInt("highest_score", count++);
                     }
 
                     }
@@ -135,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     score = 0;
                     txt.setText("score is: " + score);
                     timer.start();
+
                 }
             });
             holes.add(hole);
